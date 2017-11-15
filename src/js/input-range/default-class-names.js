@@ -14,6 +14,8 @@ const DEFAULT_CLASS_NAMES = {
   sliderContainer: 'input-range__slider-container',
   track: 'input-range__track input-range__track--background',
   valueLabel: 'input-range__label input-range__label--value',
+  valueLabelBottomMin: 'input-range__label input-range__label--bottom-min',
+  valueLabelBottomMax: 'input-range__label input-range__label--bottom-max',
 };
 
 export default DEFAULT_CLASS_NAMES;

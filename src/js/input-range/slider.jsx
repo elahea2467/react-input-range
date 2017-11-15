@@ -239,17 +239,20 @@ export default class Slider extends React.Component {
     const style = this.getStyle();
 
     return (
-      <span
-        className={this.props.classNames.sliderContainer}
-        ref={(node) => { this.node = node; }}
-        style={style}>
+      <span>
+        <span
+          className={this.props.classNames.sliderContainer}
+          ref={(node) => {
+            this.node = node;
+          }}
+          style={style}>
         <Label
           classNames={this.props.classNames}
           formatLabel={this.props.formatLabel}
+          mode=""
           type="value">
           {this.props.value}
         </Label>
-
         <div
           aria-labelledby={this.props.ariaLabelledby}
           aria-controls={this.props.ariaControls}
@@ -262,7 +265,15 @@ export default class Slider extends React.Component {
           onMouseDown={this.handleMouseDown}
           onTouchStart={this.handleTouchStart}
           role="slider"
-          tabIndex="0" />
+          tabIndex="0"/>
+        </span>
+        <Label
+          classNames={this.props.classNames}
+          formatLabel={this.props.formatLabel}
+          mode={this.props.type === 'min' ? 'BottomMin' : 'BottomMax'}
+          type="value">
+          {this.props.value}
+        </Label>
       </span>
     );
   }

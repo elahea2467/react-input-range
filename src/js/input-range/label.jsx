@@ -12,7 +12,7 @@ export default function Label(props) {
   const labelValue = props.formatLabel ? props.formatLabel(props.children, props.type) : props.children;
 
   return (
-    <span className={props.classNames[`${props.type}Label`]}>
+    <span className={props.classNames[`${props.type}Label${props.mode}`]}>
       <span className={props.classNames.labelContainer}>
         {labelValue}
       </span>
@@ -32,4 +32,5 @@ Label.propTypes = {
   classNames: PropTypes.objectOf(PropTypes.string).isRequired,
   formatLabel: PropTypes.func,
   type: PropTypes.string.isRequired,
+  mode: PropTypes.string,
 };
