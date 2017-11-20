@@ -33,6 +33,8 @@ export interface InputRangeProps {
   onChangeComplete?: (value: Range | number) => void;
   step?: number;
   value: Range | number;
+  maxLabel:string;
+  minLabel:string;
 }
 
 export default class InputRange extends React.Component<InputRangeProps, any> {

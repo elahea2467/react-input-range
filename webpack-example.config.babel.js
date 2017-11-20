@@ -6,6 +6,9 @@ import path from 'path';
 const webpackExampleConfig = {
   context: __dirname,
   devtool: 'source-map',
+  devServer: {
+    port: 4567
+  },
   target: 'web',
   entry: {
     example: './example/js/index.jsx',

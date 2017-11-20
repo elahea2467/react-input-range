@@ -1,6 +1,6 @@
 {
   "name": "react-input-range",
-  "version": "1.2.1",
+  "version": "0.0.1",
   "description": "React component for inputting numeric values within a range",
   "keywords": [
     "react",
@@ -14,11 +14,23 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/davidchin/react-input-range.git"
+    "url": "https://github.com/elahea2467/react-input-range.git"
   },
   "main": "lib/js/index.js",
   "types": "react-input-range.d.ts",
-  "author": "David Chin",
+  "author": [
+    {
+      "name": "David Chin"
+    },
+    {
+      "name": "elahe abedi",
+      "email": "elahe.a2467@gmail.com"
+    },
+    {
+      "name": "farzaneh jafary",
+      "email": "jafaryfarzaneh@gmail.com"
+    }
+  ],
   "license": "MIT",
   "devDependencies": {
     "@types/react": "^15.0.1",
