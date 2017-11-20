@@ -6,7 +6,9 @@
   height: $input-range-track-height;
   position: relative;
   transition: $input-range-track-transition;
-
+  >span{
+    top: 30px;
+  }
   .input-range--disabled & {
     background: $input-range-track-disabled-background;
   }

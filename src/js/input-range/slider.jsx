@@ -271,6 +271,8 @@ export default class Slider extends React.Component {
           classNames={this.props.classNames}
           formatLabel={this.props.formatLabel}
           mode={this.props.type === 'min' ? 'BottomMin' : 'BottomMax'}
+          minLabel={this.props.type === 'min' ? this.props.minLabel : ''}
+          maxLabel={this.props.type === 'max' ? this.props.maxLabel : ''}
           type="value">
           {this.props.value}
         </Label>

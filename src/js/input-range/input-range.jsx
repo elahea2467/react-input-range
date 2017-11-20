@@ -8,8 +8,8 @@ import rangePropType from './range-prop-type';
 import valuePropType from './value-prop-type';
 import Slider from './slider';
 import Track from './track';
-import { captialize, distanceTo, isDefined, isObject, length } from '../utils';
-import { DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW, UP_ARROW } from './key-codes';
+import {captialize, distanceTo, isDefined, isObject, length} from '../utils';
+import {DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW, UP_ARROW} from './key-codes';
 
 /**
  * A React component that allows users to input numeric values within a range
@@ -31,6 +31,7 @@ export default class InputRange extends React.Component {
       formatLabel: PropTypes.func,
       maxValue: rangePropType,
       minValue: rangePropType,
+      direction: PropTypes.oneOf(['ltr', 'rtl']).isRequired,
       name: PropTypes.string,
       onChangeStart: PropTypes.func,
       onChange: PropTypes.func.isRequired,
@@ -48,6 +49,7 @@ export default class InputRange extends React.Component {
   static get defaultProps() {
     return {
       classNames: DEFAULT_CLASS_NAMES,
+      direction: 'ltr',
       disabled: false,
       maxValue: 10,
       minValue: 0,
@@ -116,10 +118,27 @@ export default class InputRange extends React.Component {
    */
   getComponentClassName() {
     if (!this.props.disabled) {
+      if (this.isRTL()) {
+        return `${this.props.classNames.inputRange} ${this.props.classNames.rtlInputRange}`;
+      }
+
       return this.props.classNames.inputRange;
     }
 
+    if (this.isRTL()) {
+      return `${this.props.classNames.disabledInputRange} ${this.props.classNames.rtlInputRange}`;
+    }
+
     return this.props.classNames.disabledInputRange;
+  }
+
+  /**
+   * Return true if the direction is from right to left
+   * @private
+   * @return {boolean}
+   */
+  isRTL() {
+    return this.props.direction === 'rtl';
   }
 
   /**
@@ -177,7 +196,7 @@ export default class InputRange extends React.Component {
     const currentValues = valueTransformer.getValueFromProps(this.props, this.isMultiValue());
 
     return length(values.min, currentValues.min) >= this.props.step ||
-           length(values.max, currentValues.max) >= this.props.step;
+      length(values.max, currentValues.max) >= this.props.step;
   }
 
   /**
@@ -198,8 +217,8 @@ export default class InputRange extends React.Component {
   isWithinRange(values) {
     if (this.isMultiValue()) {
       return values.min >= this.props.minValue &&
-             values.max <= this.props.maxValue &&
-             values.min < values.max;
+        values.max <= this.props.maxValue &&
+        values.min < values.max;
     }
 
     return values.max >= this.props.minValue && values.max <= this.props.maxValue;
@@ -359,7 +378,7 @@ export default class InputRange extends React.Component {
       return;
     }
 
-    const position = valueTransformer.getPositionFromEvent(event, this.getTrackClientRect());
+    const position = valueTransformer.getPositionFromEvent(event, this.getTrackClientRect(), this.isRTL());
     this.isSliderDragging = true;
     requestAnimationFrame(() => this.updatePosition(key, position));
   }
@@ -372,14 +391,16 @@ export default class InputRange extends React.Component {
    */
   @autobind
   handleTrackDrag(event, prevEvent) {
+
     if (this.props.disabled || !this.props.draggableTrack || this.isSliderDragging) {
       return;
     }
 
+
     const {
       maxValue,
       minValue,
-      value: { max, min },
+      value: {max, min},
     } = this.props;
 
     const position = valueTransformer.getPositionFromEvent(event, this.getTrackClientRect());
@@ -414,20 +435,34 @@ export default class InputRange extends React.Component {
     }
 
     switch (event.keyCode) {
-    case LEFT_ARROW:
-    case DOWN_ARROW:
-      event.preventDefault();
-      this.decrementValue(key);
-      break;
+      case LEFT_ARROW:
+        event.preventDefault();
+        if (this.isRTL()) {
+          this.incrementValue(key);
+        } else {
+          this.decrementValue(key);
+        }
+        break;
 
-    case RIGHT_ARROW:
-    case UP_ARROW:
-      event.preventDefault();
-      this.incrementValue(key);
-      break;
+      case RIGHT_ARROW:
+        event.preventDefault();
+        if (this.isRTL()) {
+          this.decrementValue(key);
+        } else {
+          this.incrementValue(key);
+        }
+        break;
+      case DOWN_ARROW:
+        event.preventDefault();
+        this.decrementValue(key);
+        break;
+      case UP_ARROW:
+        event.preventDefault();
+        this.incrementValue(key);
+        break;
 
-    default:
-      break;
+      default:
+        break;
     }
   }
 
@@ -447,7 +482,7 @@ export default class InputRange extends React.Component {
     const {
       maxValue,
       minValue,
-      value: { max, min },
+      value: {max, min},
     } = this.props;
 
     event.preventDefault();
@@ -573,18 +608,23 @@ export default class InputRange extends React.Component {
    */
   renderSliders() {
     const values = valueTransformer.getValueFromProps(this.props, this.isMultiValue());
-    const percentages = valueTransformer.getPercentagesFromValues(values, this.props.minValue, this.props.maxValue);
+    const percentages = valueTransformer.getPercentagesFromValues(
+      values,
+      this.props.minValue,
+      this.props.maxValue,
+      this.isRTL(),
+    );
 
     return this.getKeys().map((key) => {
       const value = values[key];
       const percentage = percentages[key];
 
-      let { maxValue, minValue } = this.props;
+      let {maxValue, minValue} = this.props;
 
       if (key === 'min') {
-        maxValue = values.max;
+        maxValue = values.min;
       } else {
-        minValue = values.min;
+        minValue = values.max;
       }
 
       const slider = (
@@ -600,7 +640,7 @@ export default class InputRange extends React.Component {
           onSliderKeyDown={this.handleSliderKeyDown}
           percentage={percentage}
           type={key}
-          value={value} />
+          value={value}/>
       );
 
       return slider;
@@ -625,7 +665,7 @@ export default class InputRange extends React.Component {
       const name = isMultiValue ? `${this.props.name}${captialize(key)}` : this.props.name;
 
       return (
-        <input key={key} type="hidden" name={name} value={value} />
+        <input key={key} type="hidden" name={name} value={value}/>
       );
     });
   }
@@ -643,36 +683,42 @@ export default class InputRange extends React.Component {
     return (
       <div
         aria-disabled={this.props.disabled}
-        ref={(node) => { this.node = node; }}
+        ref={(node) => {
+          this.node = node;
+        }}
         className={componentClassName}
         onKeyDown={this.handleKeyDown}
         onKeyUp={this.handleKeyUp}
         onMouseDown={this.handleMouseDown}
         onTouchStart={this.handleTouchStart}>
-        <Label
-          classNames={this.props.classNames}
-          formatLabel={this.props.formatLabel}
-          type="min">
-          {this.props.minValue}
-        </Label>
+        {/*<Label*/}
+        {/*classNames={this.props.classNames}*/}
+        {/*formatLabel={this.props.formatLabel}*/}
+        {/*type="min" >*/}
+        {/*{this.props.minValue}*/}
+        {/*</Label>*/}
 
         <Track
           classNames={this.props.classNames}
           draggableTrack={this.props.draggableTrack}
-          ref={(trackNode) => { this.trackNode = trackNode; }}
+          ref={(trackNode) => {
+            this.trackNode = trackNode;
+          }}
+          isRTL={this.isRTL()}
           percentages={percentages}
           onTrackDrag={this.handleTrackDrag}
-          onTrackMouseDown={this.handleTrackMouseDown}>
-
+          onTrackMouseDown={this.handleTrackMouseDown}
+          minLabel={this.props.minLabel}
+          maxLabel={this.props.maxLabel}>
           {this.renderSliders()}
         </Track>
 
-        <Label
-          classNames={this.props.classNames}
-          formatLabel={this.props.formatLabel}
-          type="max">
-          {this.props.maxValue}
-        </Label>
+        {/*<Label*/}
+        {/*classNames={this.props.classNames}*/}
+        {/*formatLabel={this.props.formatLabel}*/}
+        {/*type="max" >*/}
+        {/*{this.props.maxValue}*/}
+        {/*</Label>*/}
 
         {this.renderHiddenInputs()}
       </div>

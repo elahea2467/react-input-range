@@ -20,6 +20,7 @@ export default class Track extends React.Component {
     return {
       children: PropTypes.node.isRequired,
       classNames: PropTypes.objectOf(PropTypes.string).isRequired,
+      isRTL: PropTypes.bool.isRequired,
       draggableTrack: PropTypes.bool,
       onTrackDrag: PropTypes.func,
       onTrackMouseDown: PropTypes.func.isRequired,
@@ -60,8 +61,7 @@ export default class Track extends React.Component {
    */
   getActiveTrackStyle() {
     const width = `${(this.props.percentages.max - this.props.percentages.min) * 100}%`;
-    const left = `${this.props.percentages.min * 100}%`;
-
+    const left = `${this.props.percentages.min * (this.props.isRTL ? -100 : 100)}%`;
     return { left, width };
   }
 
@@ -140,10 +140,11 @@ export default class Track extends React.Component {
    */
   @autobind
   handleMouseDown(event) {
+
     const clientX = event.touches ? event.touches[0].clientX : event.clientX;
     const trackClientRect = this.getClientRect();
     const position = {
-      x: clientX - trackClientRect.left,
+      x: this.props.isRTL ? (trackClientRect.width - (clientX - trackClientRect.left)) : (clientX - trackClientRect.left),
       y: 0,
     };
 
@@ -182,7 +183,18 @@ export default class Track extends React.Component {
         <div
           style={activeTrackStyle}
           className={this.props.classNames.activeTrack} />
-        {this.props.children}
+
+
+        {
+          React.Children.map(
+            this.props.children
+            , child => React.cloneElement(child,
+              {
+                minLabel:this.props.minLabel,
+                maxLabel:this.props.maxLabel
+              })
+          )
+        }
       </div>
     );
   }

@@ -36,6 +36,7 @@ class App extends React.Component {
         maxValue={20}
         minValue={0}
         value={this.state.value}
+        direction='rtl'
         onChange={value => this.setState({ value })} />
     );
   }

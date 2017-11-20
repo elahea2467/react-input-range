@@ -1,5 +1,6 @@
+
 .input-range__label {
-  color: $input-range-label-color;
+  color: $input-range-neutral-color-label;
   font-family: $input-range-font-family;
   font-size: $input-range-label-font-size;
   transform: translateZ(0);
@@ -14,13 +15,26 @@
 
 .input-range__label--min {
   left: 0;
+
+  .input-range--rtl & {
+    left: auto;
+    right: 0;
+  }
 }
 
 .input-range__label--max {
   right: 0;
+
+  .input-range--rtl & {
+    left: 0;
+    right: auto;
+  }
 }
 
 .input-range__label--value {
   position: absolute;
   top: $input-range-label-value-position-top;
+  opacity: 0;
+  transition: opacity .3s;
 }
+
