@@ -37,7 +37,7 @@
 
 .input-range__slider-container {
   transition: $input-range-slider-container-transition;
-  &:hover {
+  &:hover, &:focus, &:active {
     .input-range__label--value {
       opacity: 1;
     }
