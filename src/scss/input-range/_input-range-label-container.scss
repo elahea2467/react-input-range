@@ -55,6 +55,7 @@
   }
   .prefix-text{
     color: $input-range-neutral-prefix-label !important;
+    font-size: $input-range-prefix-label-font-size!important;
   }
 }
 .input-range__label--bottom-max{
